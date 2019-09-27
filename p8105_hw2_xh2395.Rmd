@@ -14,7 +14,49 @@ library(readxl)
 
 
 ## Problem 1
+**Read and clean the Mr. Trash Wheel sheet:**
 ```{r}
-Mr_Trash_data = read_excel(path = "./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N"))
+Mr_Trash_data = 
+  read_excel(path = "./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>% 
+  janitor::clean_names() %>%
+  drop_na(dumpster) %>% 
+  mutate(sports_balls = as.integer(round(sports_balls)))
 ```
+
+**Read and clean precipitation data for 2018**
+```{r}
+preci2018_data = 
+  read_excel(path = "./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2018 Precipitation", range = "A2:B14") %>% 
+  janitor::clean_names() %>%
+  drop_na(total) %>% 
+  mutate(year = 2018)
+```
+
+**Read and clean precipitation data for 2017**
+```{r}
+preci2017_data = 
+  read_excel(path = "./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", range = "A2:B14") %>% 
+  janitor::clean_names() %>%
+  drop_na(total) %>% 
+  mutate(year = 2017)
+```
+
+**Combine precipitation datasets**
+```{r}
+com_data = full_join(preci2017_data, preci2018_data, by = NULL) %>% 
+  mutate(month = month.name[month])
+```
+
+In dataset "Mr_Trash_data", the number of observations is `r nrow(Mr_Trash_data)`, and the number of variables is `r ncol(Mr_Trash_data)`. Key variables include "dumpster" and "sports_balls". 
+
+In dataset "preci2018_data", the number of observations is `r nrow(preci2018_data)`, and the number of variables is `r ncol(preci2018_data)`. Key variables include "year", "month" and "total".
+
+In dataset "preci2017_data", the number of observations is `r nrow(preci2017_data)`, and the number of variables is `r ncol(preci2017_data)`. Key variables include "year", "month" and "total".
+
+In dataset "com_data", the number of observations is `r nrow(com_data)`, and the number of variables is `r ncol(com_data)`. Key variables include "year", "month" and "total".
+
+The total precipitation in 2018 is `r sum(0.96+5.30+2.18+3.20+9.27+0.20+2.39)` inches.
+
+The median number of sports balls in a dumpster in 2017 is `r median(Mr_Trash_data$ sports_balls)`.
+
 
