@@ -60,3 +60,35 @@ The total precipitation in 2018 is `r sum(0.96+5.30+2.18+3.20+9.27+0.20+2.39)` i
 The median number of sports balls in a dumpster in 2017 is `r median(Mr_Trash_data$ sports_balls)`.
 
 
+## Problem 2
+**Clean the data in pols-month.csv**
+```{r}
+pols_data = 
+  read_csv("./data/pols-month.csv") %>% 
+  janitor::clean_names() %>%
+  separate(mon, into = c("year", "month", "day"), sep = "-") %>% 
+  mutate(year = as.integer(year), month = as.integer(month), day = as.integer(day)) %>% 
+  mutate(month = month.name[month]) %>% 
+  mutate(president = ifelse(prez_gop %in% 0, "dem",
+     ifelse(prez_gop %in% 1, "gop", "gop"))) %>% 
+  select(-prez_gop, -prez_dem, -day)
+```
+
+**Clean the data in snp.csv**
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
