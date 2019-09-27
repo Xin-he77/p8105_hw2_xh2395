@@ -1,0 +1,20 @@
+---
+title: "p8105_hw2_xh2395"
+author: "Xin  He"
+date: "9/27/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(readxl)
+```
+
+
+## Problem 1
+```{r}
+Mr_Trash_data = read_excel(path = "./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N"))
+```
+
