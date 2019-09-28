@@ -125,6 +125,70 @@ In dataset "pols_snp_data", the number of observations is `r nrow(pols_snp_data)
 The resulting dataset "p_s_unemploy_data", merged previous three datasets "pols_data", "snp_data" and "unemploy_tidy_data" together by year and month. In the resulting dataset, the number of observations is `r nrow(p_s_unemploy_data)`, and the number of variables is `r ncol(p_s_unemploy_data)`. Key variables include "year", "month", "president","close" and "unemployment". Range of years in this data is 1947-2015.
 
 
+## Problem 3
+**Load Popular_Baby_Names**
+```{r}
+baby_data = 
+  read_csv("./data/Popular_Baby_Names.csv") %>% 
+  janitor::clean_names()
+```
+
+**Unify the names of a categorical predictor**
+```{r}
+baby_data$ethnicity[baby_data$ethnicity == "ASIAN AND PACI"] = "ASIAN AND PACIFIC ISLANDER"
+baby_data$ethnicity[baby_data$ethnicity == "BLACK NON HISP"] = "BLACK NON HISPANIC"
+baby_data$ethnicity[baby_data$ethnicity == "WHITE NON HISP"] = "WHITE NON HISPANIC"
+```
+
+**Unify upper case**
+```{r}
+baby_data$childs_first_name = toupper(baby_data$childs_first_name)
+```
+
+**Remove duplicated rows**
+```{r}
+baby_data = 
+  dplyr::distinct(baby_data, year_of_birth, gender, ethnicity, childs_first_name, count, rank)
+```
+
+**The rank in popularity of the name “Olivia” as a female baby name over time**
+```{r}
+olivia_female = 
+  filter(baby_data, gender == "FEMALE", childs_first_name == "OLIVIA") %>% 
+  select(-count)
+
+olivia_female1 = 
+  pivot_wider(olivia_female, names_from = "year_of_birth", values_from = "rank") %>% 
+  select("gender", "childs_first_name", "ethnicity", "2011", "2012", "2013", "2014", "2015", "2016")
+
+olivia_female1
+```
+
+**The most popular name among male children over time**
+```{r}
+pop_male = 
+  filter(baby_data, gender == "MALE", rank == 1) %>% 
+  select(-count)
+
+pop_male1 = 
+  pivot_wider(pop_male, names_from = "year_of_birth", values_from = "childs_first_name") %>% 
+  select("gender", "rank", "ethnicity", "2011", "2012", "2013", "2014", "2015", "2016")
+
+pop_male1
+```
+
+**Scatter plot**
+```{r}
+white_male =
+  filter(baby_data, gender == "MALE", ethnicity == "WHITE NON HISPANIC", year_of_birth == "2016")
+
+ggplot(white_male, aes(x = rank, y = count)) + 
+  geom_point(alpha = .5) 
+```
+
+
+
+
 
 
 
