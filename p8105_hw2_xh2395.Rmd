@@ -17,16 +17,22 @@ library(readxl)
 **Read and clean the Mr. Trash Wheel sheet:**
 ```{r}
 Mr_Trash_data = 
-  read_excel(path = "./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>% 
+  read_excel(path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel", range = cell_cols("A:N")) %>% 
   janitor::clean_names() %>%
   drop_na(dumpster) %>% 
   mutate(sports_balls = as.integer(round(sports_balls)))
 ```
 
+**create a data to calculate median number of sports balls in a dumpster in 2017**
+```{r}
+sportball2017_data = 
+  filter(Mr_Trash_data, year == 2017)
+```
+
 **Read and clean precipitation data for 2018**
 ```{r}
 preci2018_data = 
-  read_excel(path = "./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2018 Precipitation", range = "A2:B14") %>% 
+  read_excel(path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2018 Precipitation", range = "A2:B14") %>% 
   janitor::clean_names() %>%
   drop_na(total) %>% 
   mutate(year = 2018)
@@ -35,7 +41,7 @@ preci2018_data =
 **Read and clean precipitation data for 2017**
 ```{r}
 preci2017_data = 
-  read_excel(path = "./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", range = "A2:B14") %>% 
+  read_excel(path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2017 Precipitation", range = "A2:B14") %>% 
   janitor::clean_names() %>%
   drop_na(total) %>% 
   mutate(year = 2017)
@@ -43,7 +49,7 @@ preci2017_data =
 
 **Combine precipitation datasets**
 ```{r}
-com_data = full_join(preci2017_data, preci2018_data, by = NULL) %>% 
+com_data = full_join(preci2017_data, preci2018_data, by = c("month", "total", "year")) %>% 
   mutate(month = month.name[month])
 ```
 
@@ -55,9 +61,9 @@ In dataset "preci2017_data", the number of observations is `r nrow(preci2017_dat
 
 In dataset "com_data", the number of observations is `r nrow(com_data)`, and the number of variables is `r ncol(com_data)`. Key variables include "year", "month" and "total".
 
-The total precipitation in 2018 is `r sum(0.96+5.30+2.18+3.20+9.27+0.20+2.39)` inches.
+The total precipitation in 2018 is `r sum(0.94+4.8+2.69+4.69+9.27+4.77+10.2+6.45+10.47+2.12+7.82+6.11)` inches.
 
-The median number of sports balls in a dumpster in 2017 is `r median(Mr_Trash_data$ sports_balls)`.
+The median number of sports balls in a dumpster in 2017 is `r median(sportball2017_data$ sports_balls)`.
 
 
 ## Problem 2
@@ -183,9 +189,17 @@ white_male =
   filter(baby_data, gender == "MALE", ethnicity == "WHITE NON HISPANIC", year_of_birth == "2016")
 
 ggplot(white_male, aes(x = rank, y = count)) + 
-  geom_point(alpha = .5) 
+  geom_point(alpha = .5) +
+  labs(
+    title = "Name plot",
+    x = "The rank in popularity of a name",
+    y = "The number of children with a name",
+    caption = "For male, white non-hispanic children born in 2016"
+  )
 ```
 
+This scatter plot shows the number of children with a name (y axis) against the rank in popularity of that name (x axis) for male, white non-hispanic children born in 2016. 
+From the plot, the association between number of children with a name and the rank in popularity of that name is not linear. 
 
 
 
